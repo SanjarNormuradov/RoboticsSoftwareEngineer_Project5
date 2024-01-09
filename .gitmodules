@@ -10,3 +10,6 @@
 [submodule "catkin_ws/src/turtlebot_simulator"]
 	path = catkin_ws/src/turtlebot_simulator
 	url = https://github.com/turtlebot/turtlebot_simulator
+[submodule "catkin_ws/src/pgm_map_creator"]
+	path = catkin_ws/src/pgm_map_creator
+	url = git@github.com:SanjarNormuradov/pgm_map_creator.git

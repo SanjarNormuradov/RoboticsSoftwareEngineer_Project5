@@ -1,6 +1,6 @@
 #!/bin/sh
-terminator -e "gazebo" &
+terminator -e "bash -c 'gazebo; exec bash'" &
 sleep 5
-terminator -e "bash -c 'source /opt/ros/kinetic/setup.bash; roscore'" &
+terminator -e "bash -c 'roscore; exec bash'" &
 sleep 5
-terminator -e "rviz"
+terminator -e "bash -c 'rviz; exec bash'"
