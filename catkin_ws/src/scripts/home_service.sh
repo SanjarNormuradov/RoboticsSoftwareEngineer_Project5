@@ -5,6 +5,6 @@ terminator -e "bash -c 'source ~/RoboticsSoftwareEngineer/project5/catkin_ws/dev
 sleep 5
 terminator -e "bash -c 'source ~/RoboticsSoftwareEngineer/project5/catkin_ws/devel/setup.bash; export ROS_IP=localhost; rviz -d ~/RoboticsSoftwareEngineer/project5/catkin_ws/src/rvizConfig/home_service.rviz; exec bash'" &
 sleep 5
-terminator -e "bash -c 'source ~/RoboticsSoftwareEngineer/project5/catkin_ws/devel/setup.bash; export ROS_IP=localhost; rosrun pick_objects pick_objects; exec bash'" &
+terminator -e "bash -c 'source ~/RoboticsSoftwareEngineer/project5/catkin_ws/devel/setup.bash; export ROS_IP=localhost; rosrun pick_objects pick_objects_server; exec bash'" &
 sleep 5
-terminator -e "bash -c 'source ~/RoboticsSoftwareEngineer/project5/catkin_ws/devel/setup.bash; export ROS_IP=localhost; rosrun add_markers add_markers; exec bash'"
+terminator -e "bash -c 'source ~/RoboticsSoftwareEngineer/project5/catkin_ws/devel/setup.bash; export ROS_IP=localhost; rosrun add_markers add_markers_client; exec bash'"

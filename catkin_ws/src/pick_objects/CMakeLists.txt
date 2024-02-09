@@ -138,6 +138,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/pick_objects_node.cpp)
 add_executable(pick_objects src/pick_objects.cpp)
+add_executable(pick_objects_server src/pick_objects_server.cpp)
 add_executable(pick_multiple_objects src/pick_multiple_objects.cpp)
 
 ## Rename C++ executable without prefix
@@ -150,6 +151,7 @@ add_executable(pick_multiple_objects src/pick_multiple_objects.cpp)
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(pick_objects ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(pick_objects_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(pick_multiple_objects ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
@@ -157,6 +159,7 @@ add_dependencies(pick_multiple_objects ${${PROJECT_NAME}_EXPORTED_TARGETS} ${cat
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(pick_objects ${catkin_LIBRARIES})
+target_link_libraries(pick_objects_server ${catkin_LIBRARIES})
 target_link_libraries(pick_multiple_objects ${catkin_LIBRARIES})
 
 #############
