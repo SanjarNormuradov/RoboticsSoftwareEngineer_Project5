@@ -1,60 +1,62 @@
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <queue>
 
+#include "pick_objects/DriveToGoal.h"
+ 
+// Define a client for to send goal requests to the move_base server through a SimpleActionClient
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-class MultiGoalNavigator {
+class GoalServiceServer {
 public:
-    MultiGoalNavigator() : ac_("move_base", true), processing_goal_(false)  {
-        goal_sub_ = nh_.subscribe("/move_base_simple/goal", 10, &MultiGoalNavigator::goalCallback, this);
-        ROS_INFO("Waiting for the move_base action server");
-        ac_.waitForServer();
+    GoalServiceServer() : ac_("move_base", true) {
+        // Wait for the action server to come up
+        while(!ac_.waitForServer(ros::Duration(5.0))){
+            ROS_INFO("Waiting for the move_base action server to come up");
+        }
+
+        // Advertise the service
+        service_ = nh_.advertiseService("/pick_objects/set_goal", &GoalServiceServer::handle_goal_request, this);
+        ROS_INFO("Service server has been started. Ready to reach the goal");
     }
 
-    void goalCallback(const geometry_msgs::PoseStamped::ConstPtr& msg) {
+    bool handle_goal_request(pick_objects::DriveToGoal::Request &req,
+                             pick_objects::DriveToGoal::Response &res) {
         move_base_msgs::MoveBaseGoal goal;
-        goal.target_pose = *msg;
-        goals_.push(goal);
-        if (!processing_goal_) {
-            sendNextGoal();
-        }
-    }
 
-    void sendNextGoal() {
-        if (!goals_.empty()) {
-            processing_goal_ = true;
-            move_base_msgs::MoveBaseGoal next_goal = goals_.front();
-            goals_.pop();
-            ROS_INFO("Sending goal");
-            ac_.sendGoal(next_goal, boost::bind(&MultiGoalNavigator::goalReachedCallback, this, _1, _2));
-        }
-    }
+        // Set up the frame parameters and goal pose
+        goal.target_pose = req.goal_pose;
+        ROS_INFO("Sending robot to the %s zone (x: %1.2f, y: %1.2f)", req.goal_type.c_str(), goal.target_pose.pose.position.x, goal.target_pose.pose.position.y);
 
-    void goalReachedCallback(const actionlib::SimpleClientGoalState& state,
-                             const move_base_msgs::MoveBaseResult::ConstPtr& result) {
-        if (state == actionlib::SimpleClientGoalState::SUCCEEDED) {
-            ROS_INFO("Goal reached!");
+        // Send the goal to the move_base
+        ac_.sendGoal(goal);
+        // Wait for the result
+        ac_.waitForResult();
+
+        if(ac_.getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
+            ROS_INFO("The robot reached the %s zone", req.goal_type.c_str());
+            res.success = true;
         } else {
-            ROS_INFO("Failed to reach the goal.");
+            ROS_INFO("The robot failed to reach the %s zone", req.goal_type.c_str());
+            res.success = false;
         }
-        processing_goal_ = false;
-        sendNextGoal();
+
+        return true;
     }
 
 private:
     ros::NodeHandle nh_;
     MoveBaseClient ac_;
-    ros::Subscriber goal_sub_;
-    std::queue<move_base_msgs::MoveBaseGoal> goals_;
-    bool processing_goal_;
+    ros::ServiceServer service_;
 };
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv){
+    // Initialize the pick_objects node
     ros::init(argc, argv, "pick_objects");
-    MultiGoalNavigator navigator;
+    GoalServiceServer server;
+
+    // Handle ROS communication events
     ros::spin();
+
     return 0;
 }
