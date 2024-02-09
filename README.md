@@ -1,0 +1,6 @@
+# Project 5: Home Service Robot
+Packagage used and their purpose:
+[turtlebot](https://github.com/turtlebot/turtlebot) contains turtlebot_teleop with keyboard_teleop.launch file which is used to teleoperate the robot in simulation with keyboard commands.
+[turtlebot_interactions](https://github.com/turtlebot/turtlebot_interactions) contains turtlebot_rviz_launchers package with view_navigation.launch file which is used for visualising the turtlebot in RViz while building a map or navigating with the ros navistack.
+[turtlebot_simulator](https://github.com/turtlebot/turtlebot_simulator) contains turtlebot_gazebo package with amcl_demo.launch, gmapping_demo.launch, and turtlebot_world.lauch files. The first one is used to set up Adaptive Monte Carlo Localization for localization within the given pgm map, and launching move_base node for path planning and navigation with obstacle avoidance using Dijkstra algorithm. The second one is used for SLAM and building a map of the environment with a laser sensor. The third one is used to bring up the world with specific version of a turtlebot in Gazebo simulation and create interface for a fake laser sensor.
+pgm_mar_creator is used to create pgm map from Gazebo world file for ROS localization.
